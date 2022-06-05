@@ -173,9 +173,17 @@ def recordUpdate(records):
             break
         print("Customer Name should not contain any numbers!")
     record.custName = x if x else record.custName
-    x = userValidation("Enter New number of Pax (Leave empty unchanged):", int, True)
+    while True:
+        x = userValidation("Enter New number of Pax (Leave empty unchanged):", int, True)
+        if x > 0:
+            break
+        print("Package Pax must be more than 0")
     record.pax = x if x else record.pax
-    x = userValidation("Enter New Package Cost (Leave empty unchanged):", int, True)
+    while True:
+        x = userValidation("Enter New Package Cost (Leave empty unchanged):", int, True)
+        if x > 0:
+            break
+        print("Package Cost must be more than 0")
     record.cost = x if x else record.cost
 
     print(f"""
@@ -207,7 +215,7 @@ def recordLSearch():
 
 def recordBSearch():
     while True:
-        x = input("Enter Customer Name to search for (0 to return): ")
+        x = input("Enter Package Name to search for (0 to return): ")
         if x == "0":
             return None
         recList = get_records()
@@ -231,7 +239,7 @@ def recordBSearch():
 
 def recordsListRange():
     while True:
-        x = input("Enter a range to search for ($X-$Y): ")
+        x = input("Enter a range to search for (e.g 100-200 or 0 to return): ")
         if x == "0":
             return
         elif x.find("-") == -1:
