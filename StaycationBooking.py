@@ -46,10 +46,11 @@ def menu():
 5. Search record by Customer Name using Linear Search and update record
 6. Search record by Package Name using Binary Search and update record
 7. List records range from $X to $Y. e.g $100-200
+8. Sort record by pax using Binary Insertion sort
 0. Exit Application
     """)
 
-def userInput(prompt, type, ignoreEmpty = False):
+def userValidation(prompt, type, ignoreEmpty = False):
     while True:
         x = input(prompt)
         if ignoreEmpty and not x:
@@ -143,7 +144,7 @@ def recordUpdate(records):
     Cost: {record.cost}""")
 
         while True:
-            selection = userInput(f"Which record would u like to update? (0 to return): ", int)
+            selection = userValidation(f"Which record would u like to update? (0 to return): ", int)
             if selection == 0:
                 print("Returning to main menu...")
                 return
@@ -161,20 +162,20 @@ def recordUpdate(records):
 
     old = Record(record.pckgName, record.custName, record.pax, record.cost)
     while True:
-        x = userInput("Enter New Package Name (Leave empty unchanged):", str, True).title()
+        x = userValidation("Enter New Package Name (Leave empty unchanged):", str, True).title()
         if x not in pckgNames:
             break
         print("Package Name currently exists!")
     record.pckgName = x if x else record.pckgName
     while True:
-        x = userInput("Enter New Customer Name (Leave empty unchanged):", str, True).title()
-        if x.replace(" ", "").isalpha():
+        x = userValidation("Enter New Customer Name (Leave empty unchanged):", str, True).title()
+        if not x or x.replace(" ", "").isalpha():
             break
         print("Customer Name should not contain any numbers!")
     record.custName = x if x else record.custName
-    x = userInput("Enter New number of Pax (Leave empty unchanged):", int, True)
+    x = userValidation("Enter New number of Pax (Leave empty unchanged):", int, True)
     record.pax = x if x else record.pax
-    x = userInput("Enter New Package Cost (Leave empty unchanged):", int, True)
+    x = userValidation("Enter New Package Cost (Leave empty unchanged):", int, True)
     record.cost = x if x else record.cost
 
     print(f"""
@@ -209,8 +210,8 @@ def recordBSearch():
         x = input("Enter Customer Name to search for (0 to return): ")
         if x == "0":
             return None
-        recordSSort()
         recList = get_records()
+        recordSSort(recList)
 
         n = len(recList)
         high = n-1
@@ -218,7 +219,7 @@ def recordBSearch():
 
         while True:
             if high < low:
-                print("Package Name not found! Try again (0 to return to menu): ")
+                print("Package Name not found! Try again.")
                 break
             mid = (high+low)//2
             if recList[mid].pckgName.lower() == x.lower():
@@ -256,30 +257,32 @@ def recordsListRange():
                         recordDisplay(obj)
                 return 
 
-def binary_search(list, val, start, end):
-    if start == end:
-        if list[start] > val:
-            return start
+def binarySearch(list, obj, low, high):
+    while (low <= high):
+        mid = low + (high - low) // 2
+        if (obj.pax == list[mid].pax):
+            return mid + 1
+        elif (obj.pax > list[mid].pax):
+            low = mid + 1
         else:
-            return start+1
-            
-    if start > end:
-        return start
- 
-    mid = (start+end)//2
-    if list[mid] < val:
-        return binary_search(list, val, mid+1, end)
-    elif list[mid] > val:
-        return binary_search(list, val, start, mid-1)
-    else:
-        return mid
+            high = mid - 1
+    return low
 
 def recordBISort(recList):
-    for i in range(1, len(recList)):
-        val = recList[i]
-        j = binary_search(recList, val, 0, i-1)
-        recList = recList[:j] + [recList] + recList[j:i] + recList[i+1:]
-    return recList
+    n = len(recList)
+
+    for i in range (n):
+        j = i - 1
+        selected = recList[i]
+         
+        # find location where selected should be inseretd
+        loc = binarySearch(recList, selected, 0, j)
+         
+        # Move all elements after location to create space
+        while (j >= loc):
+            recList[j + 1] = recList[j]
+            j-=1
+        recList[j + 1] = selected
 
 
 def main():
@@ -289,7 +292,7 @@ def main():
         if x or y==5:
             y=0
             menu()
-        userInput = input("Enter a number from 1-7 to begin (0 to exit program): ")
+        userInput = input("Enter a number from 1-8 to begin (0 to exit program): ")
         if userInput == "1":
             recordDisplay()
         elif userInput == "2":
@@ -311,6 +314,9 @@ def main():
                 recordUpdate([result])
         elif userInput == "7":
             recordsListRange()
+        elif userInput == "8":
+            recordBISort(get_records())
+            recordDisplay()
         elif userInput == "0":
             print("Ending program...")
             exit()
