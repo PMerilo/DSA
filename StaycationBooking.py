@@ -16,13 +16,13 @@ Cost: {self.cost}
 
 records = [
     Record("The Capitol Kempinski Hotel Singapore", "Jeremy Wang", 2, 340),
-    Record("ONE°15 Marina, Sentosa Cove", "Revanth Ravi", 1, 330),
+    Record("ONE°15 Marina, Sentosa Cove", "Revanth Ravi", 6, 330),
     Record("Shangri-La Hotel Singapore", "Reegan Goe", 1, 350),
     Record("Andaz Singapore", "Isaac Ho", 5, 250),
     Record("Sofitel Singapore City Center", "Bryan Seow", 3, 190),
     Record("Lloyd’s Inn", "Bryan Wong", 2, 160),
     Record("The Warehouse Hotel", "Lucas Lee", 3, 150),
-    Record("Resorts World Sentosa – Beach Villas", "Nicole Ngan", 2, 400),
+    Record("Resorts World Sentosa – Beach Villas", "Nicole Ngan", 7, 400),
     Record("The Fullerton Hotel", "Wu Yue Wei", 8, 300),
     Record("Raffles Singapore", "Nicole Ngan", 4, 220)
 ]
@@ -46,7 +46,7 @@ def menu():
 5. Search record by Customer Name using Linear Search and update record
 6. Search record by Package Name using Binary Search and update record
 7. List records range from $X to $Y. e.g $100-200
-8. Sort record by pax using Binary Insertion sort
+8. Sort record by pax using Heap sort
 0. Exit Application
     """)
 
@@ -257,32 +257,42 @@ def recordsListRange():
                         recordDisplay(obj)
                 return 
 
-def binarySearch(list, obj, low, high):
-    while (low <= high):
-        mid = low + (high - low) // 2
-        if (obj.pax == list[mid].pax):
-            return mid + 1
-        elif (obj.pax > list[mid].pax):
-            low = mid + 1
-        else:
-            high = mid - 1
-    return low
-
-def recordBISort(recList):
+def heapify(recList, n, i):
+    largest = i  # Initialize largest as root
+    l = 2 * i + 1     # left = 2*i + 1
+    r = 2 * i + 2     # right = 2*i + 2
+ 
+    # See if left child of root exists and is
+    # greater than root
+    if l < n and recList[largest].pax < recList[l].pax:
+        largest = l
+ 
+    # See if right child of root exists and is
+    # greater than root
+    if r < n and recList[largest].pax < recList[r].pax:
+        largest = r
+ 
+    # Change root, if needed
+    if largest != i:
+        recList[i], recList[largest] = recList[largest], recList[i]  # swap
+ 
+        # Heapify the root.
+        heapify(recList, n, largest)
+ 
+# The main function to sort an array of given size
+ 
+ 
+def recordHeapSort(recList):
     n = len(recList)
-
-    for i in range (n):
-        j = i - 1
-        selected = recList[i]
-         
-        # find location where selected should be inseretd
-        loc = binarySearch(recList, selected, 0, j)
-         
-        # Move all elements after location to create space
-        while (j >= loc):
-            recList[j + 1] = recList[j]
-            j-=1
-        recList[j + 1] = selected
+ 
+    # Build a maxheap.
+    for i in range(n//2 - 1, -1, -1):
+        heapify(recList, n, i)
+ 
+    # One by one extract elements
+    for i in range(n-1, 0, -1):
+        recList[i], recList[0] = recList[0], recList[i]  # swap
+        heapify(recList, i, 0)
 
 
 def main():
@@ -315,7 +325,7 @@ def main():
         elif userInput == "7":
             recordsListRange()
         elif userInput == "8":
-            recordBISort(get_records())
+            recordHeapSort(get_records())
             recordDisplay()
         elif userInput == "0":
             print("Ending program...")
