@@ -252,10 +252,35 @@ def recordsListRange():
                     high = tmp
 
                 for obj in recList:
-                    if low < obj.cost < high: 
+                    if low <= obj.cost <= high: 
                         recordDisplay(obj)
                 return 
-        
+
+def binary_search(list, val, start, end):
+    if start == end:
+        if list[start] > val:
+            return start
+        else:
+            return start+1
+            
+    if start > end:
+        return start
+ 
+    mid = (start+end)//2
+    if list[mid] < val:
+        return binary_search(list, val, mid+1, end)
+    elif list[mid] > val:
+        return binary_search(list, val, start, mid-1)
+    else:
+        return mid
+
+def recordBISort(recList):
+    for i in range(1, len(recList)):
+        val = recList[i]
+        j = binary_search(recList, val, 0, i-1)
+        recList = recList[:j] + [recList] + recList[j:i] + recList[i+1:]
+    return recList
+
 
 def main():
     x = True
