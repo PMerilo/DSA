@@ -79,7 +79,7 @@ def recordBSort(recList, updateRecord = True):
     for i in range(n - 1, 0, -1):
     # Bubble the largest item to the end
         for j in range(i):
-            if recList[j].custName > recList[j + 1].custName:
+            if recList[j].custName.lower() > recList[j + 1].custName.lower():
                 # Swap the j and j+1 items
                 tmp = recList[j]
                 recList[j] = recList[j + 1]
@@ -97,7 +97,7 @@ def recordSSort(recList, updateRecord = True):
         smallNdx = i
     # Determine if any other element contains a smaller value.
         for j in range(i+1, n):
-            if recList[j].pckgName < recList[smallNdx].pckgName:
+            if recList[j].pckgName.lower() < recList[smallNdx].pckgName.lower():
                 smallNdx = j
         # Swap the ith value and smallNdx value only if the smallest
         # value is not already in its proper position.
