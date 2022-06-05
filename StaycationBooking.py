@@ -1,7 +1,3 @@
-from ntpath import join
-from os import remove
-
-
 class Record():
     def __init__(self, pckgName, custName, pax, cost):
         self.pckgName = pckgName
@@ -170,7 +166,11 @@ def recordUpdate(records):
             break
         print("Package Name currently exists!")
     record.pckgName = x if x else record.pckgName
-    x = userInput("Enter New Customer Name (Leave empty unchanged):", str, True).title()
+    while True:
+        x = userInput("Enter New Customer Name (Leave empty unchanged):", str, True).title()
+        if x.replace(" ", "").isalpha():
+            break
+        print("Customer Name should not contain any numbers!")
     record.custName = x if x else record.custName
     x = userInput("Enter New number of Pax (Leave empty unchanged):", int, True)
     record.pax = x if x else record.pax
